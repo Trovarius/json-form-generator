@@ -2,7 +2,7 @@
   <div class="content">
     <div class="json">
       <h4>json</h4>
-      <code> {{ dados }} </code>
+      <code> {{ form }} </code>
       <textarea 
         v-model="jsonToString" 
         rows="50" 
@@ -11,8 +11,7 @@
     <div class="form">
       <h4>form</h4>
       <form-generator 
-        :data="dados" 
-        @addedField="updateState"/>
+        :data="form" />
     </div>
   </div>
 </template>
@@ -26,21 +25,12 @@ export default {
   },
   data() {
     return {
-      dados: {
-        altura: 50,
-        nome: "Trovarius",
-        nascimento: "2012-04-23T18:25:43.511Z",
-        skills: ["careca", "legal"],
-        teste: {
-          a: "a",
-          aaaaa: "aasasas"
-        }
-      }
+      form: this.$store.state.json
     };
   },
   computed: {
     jsonToString() {
-      return JSON.stringify(this.dados);
+      return JSON.stringify(this.form);
     }
   },
   methods: {

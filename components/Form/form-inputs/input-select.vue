@@ -1,7 +1,13 @@
 <template>
-  <input 
-    v-model="data[label]"
-    type="text" >
+  <div>
+    <select>
+      <option 
+        v-for="(value, index) in data[label]"
+        :key="index">
+        {{ value }}
+      </option>
+    </select>
+  </div>
 </template>
 
 <script>

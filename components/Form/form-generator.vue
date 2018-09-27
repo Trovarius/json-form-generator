@@ -27,10 +27,9 @@
         :key="key">
         <label :for="key">{{ key }}</label> 
         <component 
-          :is="getInputType(data[key])" 
+          :is="getInputType(getData[key])" 
           :data="getData"
-          :label="key"
-          @addedField="formEvents().addField()"/>
+          :label="key"/>
       </div>
     </div>
   </fieldset>
@@ -41,6 +40,7 @@ import inputString from "./form-inputs/input-string";
 import inputDate from "./form-inputs/input-date";
 import inputNumber from "./form-inputs/input-number";
 import inputSelect from "./form-inputs/input-select";
+import inputBoolean from "./form-inputs/input-boolean";
 
 export default {
   name: "FormGenerator",
@@ -48,7 +48,8 @@ export default {
     inputString,
     inputDate,
     inputNumber,
-    inputSelect
+    inputSelect,
+    inputBoolean
   },
   props: {
     data: {
@@ -82,9 +83,7 @@ export default {
       return {
         showAddForm: () => (this.showAddForm = !this.showAddForm),
         addField: () => {
-          this.data = Object.assign(this.data, { a: "b" });
-          //this.formEvents().addedField();
-          return this.data;
+          Object.defineProperty(this.data, "a", { value: 37 });
         },
         addedField: () => {
           this.$emit("addedField");
@@ -96,6 +95,8 @@ export default {
       return !isNaN(dateWrapper.getDate());
     },
     getInputType(value) {
+      if (typeof value === "boolean") return "input-boolean";
+
       if (typeof value === "number") return "input-number";
 
       if (Array.isArray(value)) return "input-select";
@@ -113,7 +114,7 @@ export default {
 <style>
 .form-generation {
   margin: 3%;
-  width: 100%;
+
   float: clear;
 }
 
