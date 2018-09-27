@@ -37,7 +37,9 @@ const createStore = () => {
       }
     },
     mutations: {
-
+      updateState(state, payload) {
+        state.json = payload;
+      }
     }
   })
 }

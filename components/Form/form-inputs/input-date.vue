@@ -1,12 +1,20 @@
 <template>
   <input 
-    v-model="data"
+    v-model="data[label]"
     type="date" >
 </template>
 
 <script>
 export default {
-  props: { data: { type: String, default: "" } }
+  props: {
+    data: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    label: { type: String, default: "" }
+  }
 };
 </script>
 

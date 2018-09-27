@@ -1,14 +1,39 @@
 <template>
-  <div class="form-generation">
-    <div 
-      v-for="(value, key) in data" 
-      :key="key">
-      <label :for="key">{{ key }}</label>
-      <component 
-        :is="getInputType(value)" 
-        :data="value"/>
+  <fieldset>
+    <legend>
+      <button @click="formEvents().showAddForm()">+ new</button>
+    </legend>
+    <div v-if="showAddForm">
+      <select 
+        v-model="addFields.type">
+        <option value="string">String</option>
+        <option value="number">Number</option>
+        <option value="date">Date</option>
+        <option value="array">Array</option>
+        <option value="object">Object</option>
+      </select>
+      <input 
+        v-model="addFields.label" 
+        placeholder="label" >  
+      <input 
+        v-model="addFields.value"  
+        placeholder="value" >  
+      <button @click="formEvents().addField()">+</button>
     </div>
-  </div>
+  
+    <div class="form-generation">
+      <div 
+        v-for="(value, key) in data" 
+        :key="key">
+        <label :for="key">{{ key }}</label> 
+        <component 
+          :is="getInputType(data[key])" 
+          :data="data"
+          :label="key"
+          @addedField="formEvents().addField()"/>
+      </div>
+    </div>
+  </fieldset>
 </template>
 
 <script>
@@ -31,9 +56,36 @@ export default {
       default() {
         return {};
       }
+    },
+    label: {
+      type: String,
+      default: null
     }
   },
+  data() {
+    return {
+      showAddForm: false,
+      addFields: {
+        type: "string",
+        label: null,
+        value: null
+      }
+    };
+  },
   methods: {
+    formEvents() {
+      return {
+        showAddForm: () => (this.showAddForm = !this.showAddForm),
+        addField: () => {
+          this.data = Object.assign(this.data, { a: "b" });
+          //this.formEvents().addedField();
+          return this.data;
+        },
+        addedField: () => {
+          this.$emit("addedField");
+        }
+      };
+    },
     isValidDate(value) {
       var dateWrapper = new Date(value);
       return !isNaN(dateWrapper.getDate());
@@ -56,5 +108,12 @@ export default {
 <style>
 .form-generation {
   margin: 3%;
+  width: 100%;
+  float: clear;
+}
+
+.form-generation label {
+  width: 50%;
+  display: block;
 }
 </style>

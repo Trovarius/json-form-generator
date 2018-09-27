@@ -1,6 +1,6 @@
 <template>
   <input 
-    v-model="data"
+    v-model="data[label]"
     type="text" >
 </template>
 
@@ -8,11 +8,12 @@
 export default {
   props: {
     data: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       }
-    }
+    },
+    label: { type: String, default: "" }
   }
 };
 </script>
