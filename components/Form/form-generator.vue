@@ -22,13 +22,13 @@
     </div>
   
     <div class="form-generation">
-      <div 
-        v-for="(value, key) in data" 
+      <div  
+        v-for="(value, key) in getData" 
         :key="key">
         <label :for="key">{{ key }}</label> 
         <component 
           :is="getInputType(data[key])" 
-          :data="data"
+          :data="getData"
           :label="key"
           @addedField="formEvents().addField()"/>
       </div>
@@ -71,6 +71,11 @@ export default {
         value: null
       }
     };
+  },
+  computed: {
+    getData() {
+      return this.label ? this.data[this.label] : this.data;
+    }
   },
   methods: {
     formEvents() {

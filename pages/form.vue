@@ -12,7 +12,6 @@
       <h4>form</h4>
       <form-generator 
         :data="dados" 
-        label="Principal" 
         @addedField="updateState"/>
     </div>
   </div>
@@ -31,7 +30,11 @@ export default {
         altura: 50,
         nome: "Trovarius",
         nascimento: "2012-04-23T18:25:43.511Z",
-        skills: ["careca", "legal"]
+        skills: ["careca", "legal"],
+        teste: {
+          a: "a",
+          aaaaa: "aasasas"
+        }
       }
     };
   },
