@@ -1,4 +1,5 @@
 import Vuex from 'vuex'
+import Vue from 'vue'
 
 const createStore = () => {
   return new Vuex.Store({
@@ -8,6 +9,7 @@ const createStore = () => {
         "nome": "Trovarius",
         "nascimento": "2012-04-23T18:25:43.511Z",
         "skills": ["careca", "legal"],
+        "caracteristicas": [{"teste": "1"}, {"teste": "2"}],
         "widget": {
           "debug": "on",
           "window": {
@@ -37,8 +39,14 @@ const createStore = () => {
       }
     },
     mutations: {
-      updateState(state, payload) {
-        state.json = payload;
+      addField(state, payload) {
+        const arr = payload.path.split('.').filter(x => x != "");
+        let obj = arr.reduce((obj, key) =>
+        (obj && obj[key] !== 'undefined') ? obj[key] : undefined, state.json);
+        
+        if(obj){
+          Vue.set(obj, payload.key, payload.value) ;
+        }
       }
     }
   })

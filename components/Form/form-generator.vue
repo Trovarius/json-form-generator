@@ -1,8 +1,19 @@
 <template>
   <fieldset>
-    <legend>
-      <button @click="formEvents().showAddForm()">+ new</button>
-    </legend>
+    <label >{{ getParent }}</label> 
+    <div class="form-generation">
+      <div  
+        v-for="(value, key) in getData" 
+        :key="key">
+        <label :for="key">{{ key }}</label> 
+        <component 
+          :is="getInputType(getData[key])" 
+          :data="getData"
+          :label="key"
+          :parent="getParent"/>
+      </div>
+    </div>
+    <button @click="addFormShow()">+ new</button>
     <div v-if="showAddForm">
       <select 
         v-model="addFields.type">
@@ -18,19 +29,7 @@
       <input 
         v-model="addFields.value"  
         placeholder="value" >  
-      <button @click="formEvents().addField()">+</button>
-    </div>
-  
-    <div class="form-generation">
-      <div  
-        v-for="(value, key) in getData" 
-        :key="key">
-        <label :for="key">{{ key }}</label> 
-        <component 
-          :is="getInputType(getData[key])" 
-          :data="getData"
-          :label="key"/>
-      </div>
+      <button @click="addField()">+</button>
     </div>
   </fieldset>
 </template>
@@ -41,6 +40,7 @@ import inputDate from "./form-inputs/input-date";
 import inputNumber from "./form-inputs/input-number";
 import inputSelect from "./form-inputs/input-select";
 import inputBoolean from "./form-inputs/input-boolean";
+import inputObjectArray from "./form-inputs/input-object-array";
 
 export default {
   name: "FormGenerator",
@@ -49,7 +49,8 @@ export default {
     inputDate,
     inputNumber,
     inputSelect,
-    inputBoolean
+    inputBoolean,
+    inputObjectArray
   },
   props: {
     data: {
@@ -59,6 +60,10 @@ export default {
       }
     },
     label: {
+      type: String,
+      default: null
+    },
+    parent: {
       type: String,
       default: null
     }
@@ -76,19 +81,27 @@ export default {
   computed: {
     getData() {
       return this.label ? this.data[this.label] : this.data;
+    },
+    getParent() {
+      return this.label ? `${this.parent || ""}.${this.label}` : "";
     }
   },
   methods: {
-    formEvents() {
-      return {
-        showAddForm: () => (this.showAddForm = !this.showAddForm),
-        addField: () => {
-          Object.defineProperty(this.data, "a", { value: 37 });
-        },
-        addedField: () => {
-          this.$emit("addedField");
-        }
-      };
+    addField() {
+      this.$store.commit("addField", {
+        path: this.getParent,
+        key: this.addFields.label,
+        value: this.addFields.value
+      });
+
+      this.addFormShow();
+    },
+    addFormShow() {
+      this.showAddForm = !this.showAddForm;
+    },
+    isNumeric(value) {
+      let isNumeric = /^[-+]?(\d+|\d+\.\d*|\d*\.\d+)$/;
+      return isNumeric.test(value);
     },
     isValidDate(value) {
       var dateWrapper = new Date(value);
@@ -97,7 +110,11 @@ export default {
     getInputType(value) {
       if (typeof value === "boolean") return "input-boolean";
 
-      if (typeof value === "number") return "input-number";
+      if (typeof value === "number" || this.isNumeric(value))
+        return "input-number";
+
+      if (Array.isArray(value) && value.length && typeof value[0] === "object")
+        return "input-object-array";
 
       if (Array.isArray(value)) return "input-select";
 
